@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { useNavigate } from "react-router-dom";
 import { Search, MapPin, TrendingUp, Building2, Send, ArrowLeft, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +81,7 @@ const startups = [
 ];
 
 const InvestmentPage = () => {
+  const navigate = useNavigate();
   return (
     <Layout>
       {/* Hero Section */}
@@ -145,11 +147,11 @@ const InvestmentPage = () => {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="flex-1" onClick={() => navigate(`/investment/opportunity/${opp.id}`)}>
                           التفاصيل
                           <ArrowLeft className="h-4 w-4 mr-2" />
                         </Button>
-                        <Button className="flex-1">
+                        <Button className="flex-1" onClick={() => navigate(`/investment/contact/${opp.id}`)}>
                           <Send className="h-4 w-4 ml-2" />
                           استفسار
                         </Button>
@@ -189,7 +191,7 @@ const InvestmentPage = () => {
                         <div>{startup.sector}</div>
                         <div>{startup.team} أعضاء</div>
                       </div>
-                      <Button className="w-full">
+                      <Button className="w-full" onClick={() => navigate(`/investment/contact/${startup.id}`)}>
                         <Send className="h-4 w-4 ml-2" />
                         تواصل
                       </Button>
