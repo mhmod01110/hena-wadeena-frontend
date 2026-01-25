@@ -14,16 +14,138 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          status: Database["public"]["Enums"]["user_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["user_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["user_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_documents: {
+        Row: {
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_url: string
+          id: string
+          updated_at: string
+          user_id: string
+          verification_notes: string | null
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_url: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          verification_notes?: string | null
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string
+          file_url?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          verification_notes?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "admin"
+        | "investor"
+        | "merchant"
+        | "tourist"
+        | "student"
+        | "resident"
+        | "driver"
+      document_type:
+        | "national_id"
+        | "commercial_register"
+        | "bank_certificate"
+        | "tax_card"
+        | "business_license"
+        | "shop_address_proof"
+        | "driving_license"
+        | "vehicle_license"
+        | "vehicle_insurance"
+        | "university_card"
+        | "acceptance_letter"
+      user_status: "active" | "inactive" | "suspended" | "pending_verification"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +272,30 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "admin",
+        "investor",
+        "merchant",
+        "tourist",
+        "student",
+        "resident",
+        "driver",
+      ],
+      document_type: [
+        "national_id",
+        "commercial_register",
+        "bank_certificate",
+        "tax_card",
+        "business_license",
+        "shop_address_proof",
+        "driving_license",
+        "vehicle_license",
+        "vehicle_insurance",
+        "university_card",
+        "acceptance_letter",
+      ],
+      user_status: ["active", "inactive", "suspended", "pending_verification"],
+    },
   },
 } as const

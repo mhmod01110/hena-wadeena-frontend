@@ -10,6 +10,10 @@ import InvestmentPage from "./pages/InvestmentPage";
 import TourismPage from "./pages/TourismPage";
 import NotFound from "./pages/NotFound";
 
+// Auth pages
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+
 // Logistics pages
 import CreateTripPage from "./pages/logistics/CreateTripPage";
 import BookTripPage from "./pages/logistics/BookTripPage";
@@ -38,6 +42,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          {/* Auth routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          {/* Logistics routes */}
           <Route path="/logistics" element={<LogisticsPage />} />
           <Route path="/logistics/create-trip" element={<CreateTripPage />} />
           <Route path="/logistics/book/:id" element={<BookTripPage />} />
