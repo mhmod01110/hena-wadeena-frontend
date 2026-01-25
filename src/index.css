@@ -1,96 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Hena Wadina Design System - New Valley Digital Gateway
+   Brand: Desert Sand + Palm Green + Oasis Blue
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Desert Sand tones */
+    --background: 40 33% 96%;
+    --foreground: 30 20% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 30% 99%;
+    --card-foreground: 30 20% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 30% 99%;
+    --popover-foreground: 30 20% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Palm Green - Primary */
+    --primary: 145 45% 32%;
+    --primary-foreground: 40 30% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Desert Sand - Secondary */
+    --secondary: 35 40% 88%;
+    --secondary-foreground: 30 20% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 35 25% 90%;
+    --muted-foreground: 30 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Oasis Blue - Accent */
+    --accent: 195 75% 45%;
+    --accent-foreground: 195 90% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 35 20% 85%;
+    --input: 35 20% 85%;
+    --ring: 145 45% 32%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Sidebar */
+    --sidebar-background: 40 30% 99%;
+    --sidebar-foreground: 30 20% 15%;
+    --sidebar-primary: 145 45% 32%;
+    --sidebar-primary-foreground: 40 30% 98%;
+    --sidebar-accent: 195 75% 45%;
+    --sidebar-accent-foreground: 195 90% 98%;
+    --sidebar-border: 35 20% 85%;
+    --sidebar-ring: 145 45% 32%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Chart colors */
+    --chart-1: 145 45% 40%;
+    --chart-2: 195 75% 45%;
+    --chart-3: 35 60% 55%;
+    --chart-4: 160 50% 45%;
+    --chart-5: 25 50% 45%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar: 40 30% 99%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Typography */
+    --font-sans: 'Cairo', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Cairo', ui-serif, Georgia, serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    /* Enhanced shadows */
+    --shadow-2xs: 0 1px 2px 0px hsl(30 20% 20% / 0.03);
+    --shadow-xs: 0 1px 3px 0px hsl(30 20% 20% / 0.05);
+    --shadow-sm: 0 2px 4px 0px hsl(30 20% 20% / 0.08);
+    --shadow: 0 4px 8px -2px hsl(30 20% 20% / 0.1);
+    --shadow-md: 0 6px 16px -4px hsl(30 20% 20% / 0.12);
+    --shadow-lg: 0 12px 24px -6px hsl(30 20% 20% / 0.15);
+    --shadow-xl: 0 20px 40px -8px hsl(30 20% 20% / 0.18);
+    --shadow-2xl: 0 32px 64px -12px hsl(30 20% 20% / 0.22);
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    /* Custom gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(145 45% 32%) 0%, hsl(195 75% 45%) 100%);
+    --gradient-sand: linear-gradient(180deg, hsl(40 33% 96%) 0%, hsl(35 40% 92%) 100%);
+    --gradient-oasis: linear-gradient(135deg, hsl(195 75% 50%) 0%, hsl(175 65% 45%) 100%);
 
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 30 20% 10%;
+    --foreground: 40 30% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 30 18% 14%;
+    --card-foreground: 40 30% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 30 18% 18%;
+    --popover-foreground: 40 30% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 145 50% 45%;
+    --primary-foreground: 30 20% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 35 25% 25%;
+    --secondary-foreground: 40 30% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 30 15% 25%;
+    --muted-foreground: 35 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 195 70% 50%;
+    --accent-foreground: 30 20% 10%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 85% 97%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 30 15% 25%;
+    --input: 30 15% 25%;
+    --ring: 145 50% 45%;
+
+    --sidebar-background: 30 18% 12%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 145 50% 45%;
+    --sidebar-primary-foreground: 30 20% 10%;
+    --sidebar-accent: 195 70% 50%;
+    --sidebar-accent-foreground: 30 20% 10%;
+    --sidebar-border: 30 15% 25%;
+    --sidebar-ring: 145 50% 45%;
+
+    --chart-1: 145 55% 55%;
+    --chart-2: 195 70% 55%;
+    --chart-3: 35 55% 60%;
+    --chart-4: 160 55% 55%;
+    --chart-5: 25 45% 55%;
+
+    --sidebar: 30 18% 14%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(145 50% 35%) 0%, hsl(195 70% 40%) 100%);
+    --gradient-sand: linear-gradient(180deg, hsl(30 20% 10%) 0%, hsl(30 18% 14%) 100%);
+    --gradient-oasis: linear-gradient(135deg, hsl(195 70% 45%) 0%, hsl(175 60% 40%) 100%);
   }
 }
 
@@ -100,6 +145,44 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .gradient-sand {
+    background: var(--gradient-sand);
+  }
+  
+  .gradient-oasis {
+    background: var(--gradient-oasis);
+  }
+
+  .text-gradient-hero {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
   }
 }
