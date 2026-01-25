@@ -119,6 +119,7 @@ const accommodations = [
 ];
 
 const TourismPage = () => {
+  const navigate = useNavigate();
   return (
     <Layout>
       {/* Hero Section */}
@@ -288,7 +289,7 @@ const TourismPage = () => {
                           <span className="text-2xl font-bold text-primary">{guide.pricePerDay}</span>
                           <span className="text-sm text-muted-foreground mr-1">جنيه/يوم</span>
                         </div>
-                        <Button>
+                        <Button onClick={() => navigate(`/tourism/guide-booking/${guide.id}`)}>
                           <Calendar className="h-4 w-4 ml-2" />
                           احجز
                         </Button>
@@ -343,9 +344,9 @@ const TourismPage = () => {
                           <span className="text-2xl font-bold text-primary">{acc.price}</span>
                           <span className="text-sm text-muted-foreground mr-1">جنيه/{acc.priceUnit}</span>
                         </div>
-                        <Button variant="outline">
+                        <Button variant="outline" onClick={() => navigate(`/tourism/accommodation/${acc.id}`)}>
                           <Phone className="h-4 w-4 ml-2" />
-                          استفسار
+                          تفاصيل
                         </Button>
                       </div>
                     </CardContent>

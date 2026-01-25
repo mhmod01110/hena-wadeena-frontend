@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Clock, ArrowLeft, Bus, Car, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -83,6 +84,7 @@ const carpoolTrips = [
 ];
 
 const LogisticsPage = () => {
+  const navigate = useNavigate();
   const [searchFrom, setSearchFrom] = useState("");
   const [searchTo, setSearchTo] = useState("");
 
@@ -171,7 +173,7 @@ const LogisticsPage = () => {
                         <div className="text-2xl font-bold text-primary">
                           {route.price} <span className="text-sm font-normal">جنيه</span>
                         </div>
-                        <Button>احجز الآن</Button>
+                        <Button onClick={() => navigate(`/logistics/route/${route.id}`)}>احجز الآن</Button>
                       </div>
                     </div>
                   </CardContent>
@@ -208,7 +210,7 @@ const LogisticsPage = () => {
             <TabsContent value="carpool" className="space-y-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-foreground">الرحلات المتاحة</h3>
-                <Button>
+                <Button onClick={() => navigate("/logistics/create-trip")}>
                   <Car className="h-4 w-4 ml-2" />
                   أضف رحلتك
                 </Button>
@@ -242,7 +244,7 @@ const LogisticsPage = () => {
                           </div>
                           <div className="text-sm text-muted-foreground">{trip.seats} مقاعد متاحة</div>
                         </div>
-                        <Button>احجز مقعد</Button>
+                        <Button onClick={() => navigate(`/logistics/book/${trip.id}`)}>احجز مقعد</Button>
                       </div>
                     </div>
                   </CardContent>
