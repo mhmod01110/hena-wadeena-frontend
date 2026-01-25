@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import LogisticsPage from "./pages/LogisticsPage";
 import MarketplacePage from "./pages/MarketplacePage";
@@ -41,6 +41,9 @@ const App = () => (
           <Route path="/logistics/create-trip" element={<CreateTripPage />} />
           <Route path="/logistics/book/:id" element={<BookTripPage />} />
           <Route path="/logistics/route/:id" element={<RouteDetailsPage />} />
+          {/* Alternate routes - redirects */}
+          <Route path="/logistics/:id" element={<RouteDetailsPage />} />
+          <Route path="/book-trip/:id" element={<BookTripPage />} />
           <Route path="/marketplace" element={<MarketplacePage />} />
           <Route path="/marketplace/prices" element={<PricesPage />} />
           <Route path="/investment" element={<InvestmentPage />} />
