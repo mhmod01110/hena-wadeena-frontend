@@ -25,6 +25,7 @@ import ContactPage from "./pages/investment/ContactPage";
 // Tourism pages
 import GuideBookingPage from "./pages/tourism/GuideBookingPage";
 import AccommodationDetailsPage from "./pages/tourism/AccommodationDetailsPage";
+import AttractionsPage from "./pages/tourism/AttractionsPage";
 import AccommodationInquiryPage from "./pages/tourism/AccommodationInquiryPage";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/investment/opportunity/:id" element={<OpportunityDetailsPage />} />
           <Route path="/investment/contact/:id" element={<ContactPage />} />
           <Route path="/tourism" element={<TourismPage />} />
+          <Route path="/tourism/attractions" element={<AttractionsPage />} />
           <Route path="/tourism/guide-booking/:id" element={<GuideBookingPage />} />
           <Route path="/tourism/accommodation/:id" element={<AccommodationDetailsPage />} />
           <Route path="/tourism/accommodation-inquiry/:id" element={<AccommodationInquiryPage />} />

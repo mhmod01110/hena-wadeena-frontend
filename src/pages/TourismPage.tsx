@@ -205,7 +205,12 @@ const TourismPage = () => {
 
               {/* All Attractions */}
               <div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">كل المعالم</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-semibold text-foreground">كل المعالم</h3>
+                  <Button variant="outline" onClick={() => navigate("/tourism/attractions")}>
+                    عرض المزيد
+                  </Button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {attractions.map((attraction) => (
                     <Card
