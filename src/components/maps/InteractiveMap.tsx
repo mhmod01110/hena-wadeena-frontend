@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -45,12 +45,27 @@ export function InteractiveMap({
   className = "h-[400px] w-full rounded-xl",
   onMarkerClick,
 }: InteractiveMapProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className={`${className} bg-muted/50 flex items-center justify-center`}>
+        <span className="text-muted-foreground">جاري تحميل الخريطة...</span>
+      </div>
+    );
+  }
+
   return (
     <MapContainer
       center={center}
       zoom={zoom}
       className={className}
       scrollWheelZoom={true}
+      key={`map-${center[0]}-${center[1]}`}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -66,13 +81,13 @@ export function InteractiveMap({
           }}
         >
           <Popup>
-            <div className="text-center">
-              <h4 className="font-semibold text-foreground">{location.name}</h4>
+            <div className="text-center p-1">
+              <h4 className="font-semibold text-sm">{location.name}</h4>
               {location.type && (
-                <span className="text-xs text-muted-foreground">{location.type}</span>
+                <span className="text-xs text-gray-500">{location.type}</span>
               )}
               {location.description && (
-                <p className="text-sm mt-1">{location.description}</p>
+                <p className="text-xs mt-1">{location.description}</p>
               )}
             </div>
           </Popup>
