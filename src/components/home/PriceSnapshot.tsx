@@ -1,18 +1,17 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-const priceData = [
-  { name: "قمح", price: 1250, change: 2.5, unit: "طن" },
-  { name: "تمر سيوي", price: 45, change: -1.2, unit: "كجم" },
-  { name: "زيتون", price: 28, change: 0, unit: "كجم" },
-  { name: "برسيم", price: 800, change: 3.1, unit: "طن" },
-  { name: "أرز", price: 22, change: -0.5, unit: "كجم" },
-  { name: "فول سوداني", price: 55, change: 1.8, unit: "كجم" },
-];
+import { marketAPI, type PriceItem } from "@/services/api";
 
 export function PriceSnapshot() {
+  const [priceData, setPriceData] = useState<PriceItem[]>([]);
+
+  useEffect(() => {
+    marketAPI.getPrices().then((r) => setPriceData(r.data.slice(0, 6))).catch(console.error);
+  }, []);
+
   return (
     <section className="py-20 bg-muted/30">
       <div className="container px-4">
@@ -55,13 +54,12 @@ export function PriceSnapshot() {
                         <span className="text-sm text-muted-foreground mr-1">جنيه/{item.unit}</span>
                       </td>
                       <td className="py-4 px-6">
-                        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium ${
-                          item.change > 0
+                        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium ${item.change > 0
                             ? "bg-primary/10 text-primary"
                             : item.change < 0
-                            ? "bg-destructive/10 text-destructive"
-                            : "bg-muted text-muted-foreground"
-                        }`}>
+                              ? "bg-destructive/10 text-destructive"
+                              : "bg-muted text-muted-foreground"
+                          }`}>
                           {item.change > 0 ? (
                             <TrendingUp className="h-3.5 w-3.5" />
                           ) : item.change < 0 ? (

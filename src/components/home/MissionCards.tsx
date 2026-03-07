@@ -1,8 +1,24 @@
 import { Link } from "react-router-dom";
-import { Truck, BarChart3, TrendingUp, Compass, ArrowLeft } from "lucide-react";
+import { Truck, BarChart3, TrendingUp, Compass, ArrowLeft, Users, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const missions = [
+  {
+    id: "tourism",
+    title: "السياحة والمجتمع",
+    description: "المعالم الأثرية، المرشدين السياحيين، السكن للطلاب، وقصص الوادي.",
+    icon: Compass,
+    href: "/tourism",
+    gradient: "from-chart-4 to-primary",
+  },
+  {
+    id: "guides",
+    title: "المرشدين السياحيين",
+    description: "احجز مرشد سياحي معتمد، استعرض الباقات والتقييمات، واحجز رحلتك.",
+    icon: Users,
+    href: "/guides",
+    gradient: "from-purple-500 to-purple-700",
+  },
   {
     id: "logistics",
     title: "اللوجستيات والتنقل",
@@ -28,12 +44,12 @@ const missions = [
     gradient: "from-chart-3 to-chart-5",
   },
   {
-    id: "tourism",
-    title: "السياحة والمجتمع",
-    description: "المعالم الأثرية، المرشدين السياحيين، السكن للطلاب، وقصص الوادي.",
-    icon: Compass,
-    href: "/tourism",
-    gradient: "from-chart-4 to-primary",
+    id: "search",
+    title: "البحث والمساعد الذكي",
+    description: "ابحث عبر المنصة بالكامل أو اسأل المساعد الذكي عن أي شيء يخص الوادي الجديد.",
+    icon: Search,
+    href: "/search",
+    gradient: "from-sky-500 to-blue-600",
   },
 ];
 
@@ -44,7 +60,7 @@ export function MissionCards() {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            أربع مهام لخدمة وادينا
+            خدماتنا لأهل الوادي
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             نربط أهل الوادي بالخدمات الأساسية ونفتح أبواب الفرص للجميع
@@ -52,7 +68,7 @@ export function MissionCards() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {missions.map((mission) => {
             const Icon = mission.icon;
             return (

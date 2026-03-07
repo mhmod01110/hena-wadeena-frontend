@@ -1,40 +1,18 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, MapPin, Star, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const featuredAttractions = [
-  {
-    id: 1,
-    title: "واحة الخارجة",
-    description: "أكبر واحات الوادي الجديد، تضم آثاراً فرعونية ورومانية فريدة",
-    image: "https://images.unsplash.com/photo-1539768942893-daf53e448371?w=800",
-    rating: 4.8,
-    duration: "يوم كامل",
-    type: "أثري",
-  },
-  {
-    id: 2,
-    title: "الصحراء البيضاء",
-    description: "تشكيلات صخرية بيضاء ساحرة تحت سماء مليئة بالنجوم",
-    image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800",
-    rating: 4.9,
-    duration: "٢-٣ أيام",
-    type: "طبيعي",
-  },
-  {
-    id: 3,
-    title: "عين السبيل",
-    description: "عين مياه ساخنة طبيعية للاسترخاء والعلاج",
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800",
-    rating: 4.6,
-    duration: "نصف يوم",
-    type: "استشفائي",
-  },
-];
+import { tourismAPI, type Attraction } from "@/services/api";
 
 export function FeaturedSection() {
+  const [featuredAttractions, setFeaturedAttractions] = useState<Attraction[]>([]);
+
+  useEffect(() => {
+    tourismAPI.getFeatured().then((r) => setFeaturedAttractions(r.data)).catch(console.error);
+  }, []);
+
   return (
     <section className="py-20">
       <div className="container px-4">
@@ -59,7 +37,7 @@ export function FeaturedSection() {
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredAttractions.map((attraction) => (
-            <Link key={attraction.id} to={`/tourism/attractions/${attraction.id}`}>
+            <Link key={attraction.id} to={`/tourism/attraction/${attraction.id}`}>
               <Card className="group h-full overflow-hidden border-border/50 hover:border-primary/50 hover:shadow-lg transition-all duration-300">
                 <div className="aspect-[4/3] overflow-hidden relative">
                   <img

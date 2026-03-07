@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Clock, ArrowLeft, Bus, Car, Filter } from "lucide-react";
@@ -7,86 +7,22 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const routes = [
-  {
-    id: 1,
-    from: "الخارجة",
-    to: "القاهرة",
-    type: "باص",
-    duration: "8 ساعات",
-    price: 250,
-    departures: ["6:00 ص", "2:00 م", "10:00 م"],
-    operator: "شركة الوادي للنقل",
-  },
-  {
-    id: 2,
-    from: "الداخلة",
-    to: "أسيوط",
-    type: "باص",
-    duration: "5 ساعات",
-    price: 150,
-    departures: ["7:00 ص", "3:00 م"],
-    operator: "شركة الصحراء",
-  },
-  {
-    id: 3,
-    from: "الفرافرة",
-    to: "الواحات البحرية",
-    type: "ميكروباص",
-    duration: "4 ساعات",
-    price: 100,
-    departures: ["8:00 ص", "4:00 م"],
-    operator: "خط محلي",
-  },
-  {
-    id: 4,
-    from: "الخارجة",
-    to: "الأقصر",
-    type: "باص",
-    duration: "6 ساعات",
-    price: 180,
-    departures: ["5:00 ص", "1:00 م"],
-    operator: "شركة الوادي للنقل",
-  },
-];
-
-const stations = [
-  { id: 1, name: "محطة الخارجة المركزية", city: "الخارجة", routes: 8 },
-  { id: 2, name: "محطة الداخلة", city: "الداخلة", routes: 5 },
-  { id: 3, name: "محطة الفرافرة", city: "الفرافرة", routes: 4 },
-  { id: 4, name: "محطة باريس", city: "باريس", routes: 3 },
-];
-
-const carpoolTrips = [
-  {
-    id: 1,
-    from: "الخارجة",
-    to: "القاهرة",
-    date: "25 يناير 2024",
-    time: "7:00 ص",
-    seats: 2,
-    price: 200,
-    driver: "أحمد محمد",
-    rating: 4.8,
-  },
-  {
-    id: 2,
-    from: "الداخلة",
-    to: "أسيوط",
-    date: "26 يناير 2024",
-    time: "6:00 ص",
-    seats: 3,
-    price: 120,
-    driver: "محمود علي",
-    rating: 4.5,
-  },
-];
+import { logisticsAPI, type TransportRoute, type Station, type Carpool } from "@/services/api";
 
 const LogisticsPage = () => {
   const navigate = useNavigate();
   const [searchFrom, setSearchFrom] = useState("");
   const [searchTo, setSearchTo] = useState("");
+  const [routes, setRoutes] = useState<TransportRoute[]>([]);
+  const [stations, setStations] = useState<Station[]>([]);
+  const [carpoolTrips, setCarpoolTrips] = useState<Carpool[]>([]);
+
+  useEffect(() => {
+    logisticsAPI.getRoutes().then((r) => setRoutes(r.data)).catch(console.error);
+    logisticsAPI.getStations().then((r) => setStations(r.data)).catch(console.error);
+    logisticsAPI.getCarpools().then((r) => setCarpoolTrips(r.data)).catch(console.error);
+  }, []);
+
 
   return (
     <Layout>
@@ -100,7 +36,7 @@ const LogisticsPage = () => {
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-8">
               ابحث عن خطوط المواصلات، المحطات، أو شارك رحلتك مع الآخرين
             </p>
-            
+
             {/* Search Form */}
             <div className="bg-card rounded-2xl p-4 md:p-6 shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -197,7 +133,7 @@ const LogisticsPage = () => {
                         </div>
                         <Badge variant="outline">{station.routes} خطوط</Badge>
                       </div>
-                      <Button variant="outline" className="w-full mt-4">
+                      <Button variant="outline" className="w-full mt-4" onClick={() => navigate(`/logistics/station/${station.id}`)}>
                         عرض التفاصيل
                       </Button>
                     </CardContent>

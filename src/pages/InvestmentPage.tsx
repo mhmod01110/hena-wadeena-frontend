@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useNavigate } from "react-router-dom";
 import { Search, MapPin, TrendingUp, Building2, Send, ArrowLeft, DollarSign } from "lucide-react";
@@ -6,82 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const opportunities = [
-  {
-    id: 1,
-    title: "مشروع زراعي متكامل - 100 فدان",
-    category: "زراعة",
-    location: "الداخلة",
-    investment: "5-10 مليون جنيه",
-    roi: "18-22%",
-    status: "متاح",
-    description: "فرصة استثمارية في مشروع زراعي متكامل يشمل زراعة التمور والزيتون مع نظام ري حديث.",
-  },
-  {
-    id: 2,
-    title: "منتجع سياحي صحراوي",
-    category: "سياحة",
-    location: "الفرافرة",
-    investment: "15-25 مليون جنيه",
-    roi: "15-20%",
-    status: "متاح",
-    description: "مشروع منتجع سياحي فاخر بالقرب من الصحراء البيضاء مع خدمات سفاري وتخييم.",
-  },
-  {
-    id: 3,
-    title: "مصنع تعبئة وتغليف تمور",
-    category: "صناعة",
-    location: "الخارجة",
-    investment: "3-5 مليون جنيه",
-    roi: "25-30%",
-    status: "متاح",
-    description: "مصنع لتعبئة وتغليف التمور للتصدير مع خطوط إنتاج حديثة ومخازن مبردة.",
-  },
-  {
-    id: 4,
-    title: "محطة طاقة شمسية",
-    category: "طاقة",
-    location: "باريس",
-    investment: "50-100 مليون جنيه",
-    roi: "12-15%",
-    status: "قيد الدراسة",
-    description: "مشروع محطة طاقة شمسية بقدرة 50 ميجاوات للاستفادة من الإشعاع الشمسي العالي.",
-  },
-];
-
-const startups = [
-  {
-    id: 1,
-    name: "واحة تك",
-    sector: "تكنولوجيا زراعية",
-    stage: "مرحلة النمو",
-    location: "الخارجة",
-    team: 8,
-    description: "حلول ذكية للري والمراقبة الزراعية باستخدام إنترنت الأشياء.",
-  },
-  {
-    id: 2,
-    name: "صحراء ديليفري",
-    sector: "لوجستيات",
-    stage: "مرحلة مبكرة",
-    location: "الداخلة",
-    team: 5,
-    description: "منصة توصيل وخدمات لوجستية متخصصة في المناطق الصحراوية.",
-  },
-  {
-    id: 3,
-    name: "تمرنا",
-    sector: "تجارة إلكترونية",
-    stage: "مرحلة النمو",
-    location: "الخارجة",
-    team: 12,
-    description: "منصة لبيع التمور والمنتجات المحلية عبر الإنترنت للسوق المحلي والدولي.",
-  },
-];
+import { investmentAPI, type Opportunity, type Startup } from "@/services/api";
 
 const InvestmentPage = () => {
   const navigate = useNavigate();
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [startups, setStartups] = useState<Startup[]>([]);
+
+  useEffect(() => {
+    investmentAPI.getOpportunities().then((r) => setOpportunities(r.data)).catch(console.error);
+    investmentAPI.getStartups().then((r) => setStartups(r.data)).catch(console.error);
+  }, []);
+
   return (
     <Layout>
       {/* Hero Section */}

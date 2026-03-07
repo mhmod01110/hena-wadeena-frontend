@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { useNavigate } from "react-router-dom";
 import { Search, TrendingUp, TrendingDown, Minus, MapPin, Star, Phone, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { marketAPI, type PriceItem, type Supplier } from "@/services/api";
 
 const cities = [
   { id: "kharga", name: "الخارجة" },
@@ -15,61 +17,18 @@ const cities = [
   { id: "paris", name: "باريس" },
 ];
 
-const priceData = [
-  { name: "قمح", price: 1250, change: 2.5, unit: "طن", category: "حبوب" },
-  { name: "تمر سيوي", price: 45, change: -1.2, unit: "كجم", category: "فواكه" },
-  { name: "زيتون", price: 28, change: 0, unit: "كجم", category: "فواكه" },
-  { name: "برسيم", price: 800, change: 3.1, unit: "طن", category: "أعلاف" },
-  { name: "أرز", price: 22, change: -0.5, unit: "كجم", category: "حبوب" },
-  { name: "فول سوداني", price: 55, change: 1.8, unit: "كجم", category: "بقوليات" },
-  { name: "عنب", price: 35, change: 4.2, unit: "كجم", category: "فواكه" },
-  { name: "طماطم", price: 12, change: -2.1, unit: "كجم", category: "خضروات" },
-  { name: "بطاطس", price: 8, change: 0.5, unit: "كجم", category: "خضروات" },
-  { name: "بصل", price: 6, change: -1.0, unit: "كجم", category: "خضروات" },
-];
-
-const suppliers = [
-  {
-    id: 1,
-    name: "مزارع الوادي الأخضر",
-    specialties: ["تمور", "زيتون", "عنب"],
-    city: "الخارجة",
-    rating: 4.8,
-    reviews: 124,
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "شركة الواحات للمنتجات الزراعية",
-    specialties: ["قمح", "أرز", "برسيم"],
-    city: "الداخلة",
-    rating: 4.6,
-    reviews: 89,
-    verified: true,
-  },
-  {
-    id: 3,
-    name: "مزرعة النخيل الذهبي",
-    specialties: ["تمور", "نخيل"],
-    city: "الفرافرة",
-    rating: 4.9,
-    reviews: 156,
-    verified: true,
-  },
-  {
-    id: 4,
-    name: "جمعية المزارعين التعاونية",
-    specialties: ["خضروات", "فواكه"],
-    city: "باريس",
-    rating: 4.4,
-    reviews: 67,
-    verified: false,
-  },
-];
-
 const MarketplacePage = () => {
+  const navigate = useNavigate();
   const [selectedCity, setSelectedCity] = useState("kharga");
   const [searchQuery, setSearchQuery] = useState("");
+  const [priceData, setPriceData] = useState<PriceItem[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+
+  useEffect(() => {
+    marketAPI.getPrices().then((r) => setPriceData(r.data)).catch(console.error);
+    marketAPI.getSuppliers().then((r) => setSuppliers(r.data)).catch(console.error);
+  }, []);
+
 
   const filteredProducts = priceData.filter((p) =>
     p.name.includes(searchQuery) || p.category.includes(searchQuery)
@@ -166,13 +125,12 @@ const MarketplacePage = () => {
                             </td>
                             <td className="py-4 px-6">
                               <div
-                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium ${
-                                  item.change > 0
-                                    ? "bg-primary/10 text-primary"
-                                    : item.change < 0
+                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium ${item.change > 0
+                                  ? "bg-primary/10 text-primary"
+                                  : item.change < 0
                                     ? "bg-destructive/10 text-destructive"
                                     : "bg-muted text-muted-foreground"
-                                }`}
+                                  }`}
                               >
                                 {item.change > 0 ? (
                                   <TrendingUp className="h-3.5 w-3.5" />
@@ -236,10 +194,10 @@ const MarketplacePage = () => {
                         ))}
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" className="flex-1">
+                        <Button variant="outline" className="flex-1" onClick={() => navigate(`/marketplace/supplier/${supplier.id}`)}>
                           عرض الملف
                         </Button>
-                        <Button className="flex-1">
+                        <Button className="flex-1" onClick={() => alert(`للتواصل مع ${supplier.name}: اتصل أو أرسل واتساب`)}>
                           <Phone className="h-4 w-4 ml-2" />
                           تواصل
                         </Button>

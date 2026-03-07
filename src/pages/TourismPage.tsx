@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Star, Clock, Calendar, Users, Home, ArrowLeft, Phone } from "lucide-react";
@@ -6,121 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const attractions = [
-  {
-    id: 1,
-    title: "واحة الخارجة",
-    description: "أكبر واحات الوادي الجديد، تضم آثاراً فرعونية ورومانية فريدة من معبد هيبس ومقابر البجوات",
-    image: "https://images.unsplash.com/photo-1539768942893-daf53e448371?w=800",
-    rating: 4.8,
-    duration: "يوم كامل",
-    type: "أثري",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "الصحراء البيضاء",
-    description: "تشكيلات صخرية بيضاء ساحرة من الطباشير تحت سماء مليئة بالنجوم",
-    image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800",
-    rating: 4.9,
-    duration: "٢-٣ أيام",
-    type: "طبيعي",
-    featured: true,
-  },
-  {
-    id: 3,
-    title: "عين السبيل",
-    description: "عين مياه ساخنة طبيعية للاسترخاء والعلاج الطبيعي",
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800",
-    rating: 4.6,
-    duration: "نصف يوم",
-    type: "استشفائي",
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "معبد الغويطة",
-    description: "معبد بطلمي يعود للقرن السادس قبل الميلاد",
-    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800",
-    rating: 4.5,
-    duration: "٣ ساعات",
-    type: "أثري",
-    featured: false,
-  },
-];
-
-const guides = [
-  {
-    id: 1,
-    name: "أحمد السيد",
-    languages: ["العربية", "الإنجليزية"],
-    specialties: ["سفاري صحراوي", "مواقع أثرية"],
-    rating: 4.9,
-    reviews: 87,
-    pricePerDay: 800,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200",
-  },
-  {
-    id: 2,
-    name: "محمد فتحي",
-    languages: ["العربية", "الإنجليزية", "الفرنسية"],
-    specialties: ["تخييم", "مراقبة النجوم"],
-    rating: 4.8,
-    reviews: 64,
-    pricePerDay: 700,
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200",
-  },
-  {
-    id: 3,
-    name: "علي حسن",
-    languages: ["العربية", "الألمانية"],
-    specialties: ["سياحة علاجية", "واحات"],
-    rating: 4.7,
-    reviews: 45,
-    pricePerDay: 650,
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200",
-  },
-];
-
-const accommodations = [
-  {
-    id: 1,
-    title: "شقة مفروشة - الخارجة",
-    type: "شقة",
-    price: 1500,
-    priceUnit: "شهرياً",
-    rooms: 2,
-    location: "حي الزهور، الخارجة",
-    amenities: ["مكيفة", "إنترنت", "مطبخ مجهز"],
-    forStudents: true,
-  },
-  {
-    id: 2,
-    title: "استوديو للطلاب - الداخلة",
-    type: "استوديو",
-    price: 800,
-    priceUnit: "شهرياً",
-    rooms: 1,
-    location: "قرب الجامعة، الداخلة",
-    amenities: ["مكيف", "إنترنت"],
-    forStudents: true,
-  },
-  {
-    id: 3,
-    title: "غرفة مشتركة - الخارجة",
-    type: "غرفة مشتركة",
-    price: 500,
-    priceUnit: "شهرياً",
-    rooms: 1,
-    location: "وسط البلد، الخارجة",
-    amenities: ["مكيف مشترك", "مطبخ مشترك"],
-    forStudents: true,
-  },
-];
+import { tourismAPI, type Attraction, type Guide, type Accommodation } from "@/services/api";
 
 const TourismPage = () => {
   const navigate = useNavigate();
+  const [attractions, setAttractions] = useState<Attraction[]>([]);
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
+
+  useEffect(() => {
+    tourismAPI.getAttractions().then((r) => setAttractions(r.data)).catch(console.error);
+    tourismAPI.getGuides().then((r) => setGuides(r.data)).catch(console.error);
+    tourismAPI.getAccommodations().then((r) => setAccommodations(r.data)).catch(console.error);
+  }, []);
   return (
     <Layout>
       {/* Hero Section */}
@@ -192,7 +91,7 @@ const TourismPage = () => {
                                 {attraction.duration}
                               </div>
                             </div>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" onClick={() => navigate(`/tourism/attraction/${attraction.id}`)}>
                               المزيد
                               <ArrowLeft className="h-4 w-4 mr-1" />
                             </Button>
@@ -292,7 +191,7 @@ const TourismPage = () => {
                       </div>
                       <div className="flex items-center justify-between pt-4 border-t border-border">
                         <div>
-                          <span className="text-2xl font-bold text-primary">{guide.pricePerDay}</span>
+                          <span className="text-2xl font-bold text-primary">{guide.price_per_day}</span>
                           <span className="text-sm text-muted-foreground mr-1">جنيه/يوم</span>
                         </div>
                         <Button onClick={() => navigate(`/tourism/guide-booking/${guide.id}`)}>
@@ -329,7 +228,7 @@ const TourismPage = () => {
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-3">
                         <Badge variant="secondary">{acc.type}</Badge>
-                        {acc.forStudents && (
+                        {acc.for_students && (
                           <Badge className="bg-accent text-accent-foreground">مناسب للطلاب</Badge>
                         )}
                       </div>
@@ -348,7 +247,7 @@ const TourismPage = () => {
                       <div className="flex items-center justify-between pt-4 border-t border-border">
                         <div>
                           <span className="text-2xl font-bold text-primary">{acc.price}</span>
-                          <span className="text-sm text-muted-foreground mr-1">جنيه/{acc.priceUnit}</span>
+                          <span className="text-sm text-muted-foreground mr-1">جنيه/{acc.price_unit}</span>
                         </div>
                         <Button variant="outline" onClick={() => navigate(`/tourism/accommodation/${acc.id}`)}>
                           <Phone className="h-4 w-4 ml-2" />
