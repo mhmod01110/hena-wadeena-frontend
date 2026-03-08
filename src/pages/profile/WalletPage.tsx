@@ -7,16 +7,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { paymentsAPI, type Wallet as WalletType, type Transaction } from "@/services/api";
+import { SR } from "@/components/motion/ScrollReveal";
+import { PageTransition, GradientMesh } from "@/components/motion/PageTransition";
+import { Skeleton } from "@/components/motion/Skeleton";
 
 const WalletPage = () => {
   const [wallet, setWallet] = useState<WalletType | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [topupAmount, setTopupAmount] = useState("");
   const [showTopup, setShowTopup] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    paymentsAPI.getWallet().then((r) => setWallet(r.data)).catch(console.error);
-    paymentsAPI.getTransactions().then((r) => setTransactions(r.data)).catch(console.error);
+    Promise.all([
+      paymentsAPI.getWallet().then((r) => setWallet(r.data)),
+      paymentsAPI.getTransactions().then((r) => setTransactions(r.data)),
+    ]).finally(() => setLoading(false));
   }, []);
 
   const handleTopup = async () => {
@@ -33,73 +39,98 @@ const WalletPage = () => {
   };
 
   const txIcon = (direction: string) =>
-    direction === "credit" ? <ArrowDownCircle className="h-5 w-5 text-green-500" /> : <ArrowUpCircle className="h-5 w-5 text-red-500" />;
+    direction === "credit" ? <ArrowDownCircle className="h-6 w-6 text-green-500" /> : <ArrowUpCircle className="h-6 w-6 text-red-500" />;
 
   return (
     <Layout>
-      <section className="py-12 md:py-20">
-        <div className="container px-4 max-w-2xl space-y-6">
-          {/* Balance Card */}
-          <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-            <CardContent className="p-8 text-center">
-              <Wallet className="h-12 w-12 mx-auto mb-4 text-primary" />
-              <p className="text-sm text-muted-foreground mb-1">الرصيد الحالي</p>
-              <p className="text-5xl font-bold text-foreground">{wallet?.balance?.toLocaleString() ?? "..."}</p>
-              <p className="text-lg text-muted-foreground mt-1">جنيه مصري</p>
-              <div className="flex gap-2 justify-center mt-6">
-                <Button onClick={() => setShowTopup(!showTopup)} size="lg">
-                  <Plus className="h-4 w-4 ml-2" />
-                  شحن المحفظة
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Topup Form */}
-          {showTopup && (
-            <Card className="border-primary/30">
-              <CardContent className="p-6 space-y-4">
-                <h3 className="font-semibold text-lg">شحن المحفظة</h3>
-                <div className="flex gap-2">
-                  {[100, 250, 500, 1000].map((amt) => (
-                    <Button key={amt} variant="outline" size="sm" onClick={() => setTopupAmount(String(amt))}>{amt}</Button>
-                  ))}
-                </div>
-                <Input type="number" placeholder="مبلغ آخر..." value={topupAmount} onChange={(e) => setTopupAmount(e.target.value)} />
-                <div className="flex gap-2">
-                  <Button onClick={handleTopup} className="flex-1"><CreditCard className="h-4 w-4 ml-2" />شحن الآن</Button>
-                  <Button variant="outline" onClick={() => setShowTopup(false)}>إلغاء</Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Transactions */}
-          <Card>
-            <CardHeader><CardTitle>سجل المعاملات</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              {transactions.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد معاملات بعد</p>}
-              {transactions.map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    {txIcon(tx.direction)}
-                    <div>
-                      <p className="font-medium text-sm">{tx.description}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(tx.created_at).toLocaleDateString("ar-EG")}</p>
+      <PageTransition>
+        <section className="relative py-14 md:py-20 overflow-hidden">
+          <GradientMesh />
+          <div className="container relative px-4 max-w-2xl space-y-7">
+            {/* Balance Card */}
+            <SR>
+              <Card className="bg-gradient-to-br from-primary/15 to-accent/10 border-primary/20 rounded-2xl shadow-xl overflow-hidden">
+                <CardContent className="p-10 text-center">
+                  {loading ? (
+                    <div className="space-y-4 flex flex-col items-center">
+                      <Skeleton shape="circle" w="w-16" h="h-16" />
+                      <Skeleton w="w-40" h="h-12" />
+                      <Skeleton w="w-24" h="h-6" />
                     </div>
-                  </div>
-                  <div className="text-left">
-                    <p className={`font-bold ${tx.direction === "credit" ? "text-green-600" : "text-red-500"}`}>
-                      {tx.direction === "credit" ? "+" : "-"}{tx.amount.toLocaleString()} جنيه
-                    </p>
-                    <Badge variant="outline" className="text-xs">{tx.status === "completed" ? "مكتمل" : "معلق"}</Badge>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+                  ) : (
+                    <>
+                      <div className="h-16 w-16 mx-auto mb-5 rounded-2xl bg-primary/20 flex items-center justify-center">
+                        <Wallet className="h-9 w-9 text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">الرصيد الحالي</p>
+                      <p className="text-6xl font-bold text-foreground">{wallet?.balance?.toLocaleString() ?? "0"}</p>
+                      <p className="text-lg text-muted-foreground mt-2">جنيه مصري</p>
+                      <div className="flex gap-3 justify-center mt-8">
+                        <Button onClick={() => setShowTopup(!showTopup)} size="lg" className="h-14 px-8 rounded-xl hover:scale-[1.03] transition-transform">
+                          <Plus className="h-5 w-5 ml-2" />شحن المحفظة
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </SR>
+
+            {/* Topup Form */}
+            {showTopup && (
+              <SR>
+                <Card className="border-primary/30 rounded-2xl">
+                  <CardContent className="p-7 space-y-5">
+                    <h3 className="font-bold text-lg">شحن المحفظة</h3>
+                    <div className="flex gap-2">
+                      {[100, 250, 500, 1000].map((amt) => (
+                        <Button key={amt} variant="outline" size="sm" className="hover:scale-[1.05] transition-transform rounded-lg" onClick={() => setTopupAmount(String(amt))}>{amt}</Button>
+                      ))}
+                    </div>
+                    <Input type="number" placeholder="مبلغ آخر..." value={topupAmount} onChange={(e) => setTopupAmount(e.target.value)} className="h-12 rounded-xl" />
+                    <div className="flex gap-3">
+                      <Button onClick={handleTopup} className="flex-1 h-12 rounded-xl hover:scale-[1.02] transition-transform"><CreditCard className="h-5 w-5 ml-2" />شحن الآن</Button>
+                      <Button variant="outline" className="h-12 rounded-xl" onClick={() => setShowTopup(false)}>إلغاء</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </SR>
+            )}
+
+            {/* Transactions */}
+            <SR delay={200}>
+              <Card className="rounded-2xl">
+                <CardHeader><CardTitle className="text-xl">سجل المعاملات</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  {loading ? (
+                    [1, 2, 3].map(i => <Skeleton key={i} h="h-16" className="rounded-xl" />)
+                  ) : transactions.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-10">لا توجد معاملات بعد</p>
+                  ) : (
+                    transactions.map((tx) => (
+                      <div key={tx.id} className="flex items-center justify-between p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors duration-200">
+                        <div className="flex items-center gap-4">
+                          {txIcon(tx.direction)}
+                          <div>
+                            <p className="font-semibold text-sm">{tx.description}</p>
+                            <p className="text-xs text-muted-foreground">{new Date(tx.created_at).toLocaleDateString("ar-EG")}</p>
+                          </div>
+                        </div>
+                        <div className="text-left">
+                          <p className={`font-bold text-lg ${tx.direction === "credit" ? "text-green-600" : "text-red-500"}`}>
+                            {tx.direction === "credit" ? "+" : "-"}{tx.amount.toLocaleString()} جنيه
+                          </p>
+                          <Badge variant="outline" className="text-xs">{tx.status === "completed" ? "مكتمل" : "معلق"}</Badge>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </SR>
+          </div>
+        </section>
+      </PageTransition>
     </Layout>
   );
 };

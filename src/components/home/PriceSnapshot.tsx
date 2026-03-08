@@ -1,23 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, BarChart3 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { marketAPI, type PriceItem } from "@/services/api";
 
 export function PriceSnapshot() {
   const [priceData, setPriceData] = useState<PriceItem[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     marketAPI.getPrices().then((r) => setPriceData(r.data.slice(0, 6))).catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.1 }
+    );
+    if (sectionRef.current) io.observe(sectionRef.current);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="container px-4">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+    <section className="py-24 bg-muted/30 relative overflow-hidden">
+      <div className="absolute top-1/2 right-0 w-64 h-64 bg-chart-3/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+
+      <div ref={sectionRef as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 relative">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-chart-3/10 border border-chart-3/20 mb-5">
+              <BarChart3 className="h-4 w-4 text-chart-3" />
+              <span className="text-sm font-semibold text-chart-3">أسعار حيّة</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
               أسعار اليوم
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -25,47 +41,47 @@ export function PriceSnapshot() {
             </p>
           </div>
           <Link to="/marketplace">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 hover:scale-[1.03] transition-transform">
               البورصة الكاملة
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
         </div>
 
-        <Card className="border-border/50">
+        <Card className="border-border/50 rounded-2xl overflow-hidden shadow-lg">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">المنتج</th>
-                    <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">السعر</th>
-                    <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">التغير</th>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th className="text-right py-5 px-6 text-sm font-semibold text-muted-foreground">المنتج</th>
+                    <th className="text-right py-5 px-6 text-sm font-semibold text-muted-foreground">السعر</th>
+                    <th className="text-right py-5 px-6 text-sm font-semibold text-muted-foreground">التغير</th>
                   </tr>
                 </thead>
                 <tbody>
                   {priceData.map((item, index) => (
-                    <tr key={item.name} className={index !== priceData.length - 1 ? "border-b border-border/50" : ""}>
-                      <td className="py-4 px-6">
-                        <span className="font-medium text-foreground">{item.name}</span>
+                    <tr key={item.name} className={`hover:bg-muted/20 transition-colors duration-200 ${index !== priceData.length - 1 ? "border-b border-border/50" : ""}`}>
+                      <td className="py-5 px-6">
+                        <span className="font-semibold text-foreground">{item.name}</span>
                       </td>
-                      <td className="py-4 px-6">
-                        <span className="font-semibold text-foreground">{item.price}</span>
+                      <td className="py-5 px-6">
+                        <span className="font-bold text-lg text-foreground">{item.price}</span>
                         <span className="text-sm text-muted-foreground mr-1">جنيه/{item.unit}</span>
                       </td>
-                      <td className="py-4 px-6">
-                        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium ${item.change > 0
-                            ? "bg-primary/10 text-primary"
-                            : item.change < 0
-                              ? "bg-destructive/10 text-destructive"
-                              : "bg-muted text-muted-foreground"
+                      <td className="py-5 px-6">
+                        <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${item.change > 0
+                          ? "bg-primary/10 text-primary"
+                          : item.change < 0
+                            ? "bg-destructive/10 text-destructive"
+                            : "bg-muted text-muted-foreground"
                           }`}>
                           {item.change > 0 ? (
-                            <TrendingUp className="h-3.5 w-3.5" />
+                            <TrendingUp className="h-4 w-4" />
                           ) : item.change < 0 ? (
-                            <TrendingDown className="h-3.5 w-3.5" />
+                            <TrendingDown className="h-4 w-4" />
                           ) : (
-                            <Minus className="h-3.5 w-3.5" />
+                            <Minus className="h-4 w-4" />
                           )}
                           {Math.abs(item.change)}%
                         </div>

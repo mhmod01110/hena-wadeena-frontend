@@ -153,6 +153,39 @@
   }
 }
 
+/* ── Smooth scroll ─────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Page transition ───────────────────────────────── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-pageIn {
+  animation: pageIn 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ── Gradient mesh floats ──────────────────────────── */
+@keyframes meshFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
+}
+@keyframes meshFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 20px) scale(1.08); }
+  66% { transform: translate(15px, -10px) scale(0.92); }
+}
+@keyframes meshFloat3 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -30px); }
+}
+.animate-meshFloat { animation: meshFloat 12s ease-in-out infinite; }
+.animate-meshFloat2 { animation: meshFloat2 15s ease-in-out infinite; }
+.animate-meshFloat3 { animation: meshFloat3 10s ease-in-out infinite; }
+
 @layer utilities {
   .gradient-hero {
     background: var(--gradient-hero);
@@ -184,5 +217,135 @@
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
+  }
+
+  /* ── Scroll-Triggered Reveal ─────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal-scale.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Staggered children: add .stagger to parent, each child fades in sequence */
+  .stagger > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .stagger.visible > *:nth-child(1) { transition-delay: 0.06s; }
+  .stagger.visible > *:nth-child(2) { transition-delay: 0.12s; }
+  .stagger.visible > *:nth-child(3) { transition-delay: 0.18s; }
+  .stagger.visible > *:nth-child(4) { transition-delay: 0.24s; }
+  .stagger.visible > *:nth-child(5) { transition-delay: 0.30s; }
+  .stagger.visible > *:nth-child(6) { transition-delay: 0.36s; }
+  .stagger.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Card Hover Lift ─────────────────────────────────── */
+  .hover-lift {
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px -8px hsl(30 20% 20% / 0.12);
+  }
+  .dark .hover-lift:hover {
+    box-shadow: 0 16px 32px -8px hsl(0 0% 0% / 0.35);
+  }
+
+  /* ── Glassmorphism ───────────────────────────────────── */
+  .glass {
+    background: hsl(40 30% 99% / 0.55);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid hsl(35 20% 85% / 0.35);
+  }
+  .dark .glass {
+    background: hsl(30 18% 14% / 0.55);
+    border: 1px solid hsl(30 15% 25% / 0.35);
+  }
+
+  /* ── Floating Particles ──────────────────────────────── */
+  @keyframes particleFloat {
+    0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+    25% { transform: translate(8px, -18px); opacity: 0.7; }
+    50% { transform: translate(-4px, -36px); opacity: 0.5; }
+    75% { transform: translate(12px, -18px); opacity: 0.7; }
+  }
+  .particle { animation: particleFloat 6s ease-in-out infinite; }
+  .particle-1 { animation-delay: 0s; animation-duration: 5s; }
+  .particle-2 { animation-delay: 1s; animation-duration: 7s; }
+  .particle-3 { animation-delay: 2s; animation-duration: 6s; }
+  .particle-4 { animation-delay: 0.5s; animation-duration: 8s; }
+
+  /* ── Hero text stagger reveal ────────────────────────── */
+  @keyframes heroReveal {
+    0% { opacity: 0; transform: translateY(28px); filter: blur(4px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .hero-reveal {
+    animation: heroReveal 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  .hero-d1 { animation-delay: 0.1s; opacity: 0; }
+  .hero-d2 { animation-delay: 0.25s; opacity: 0; }
+  .hero-d3 { animation-delay: 0.4s; opacity: 0; }
+  .hero-d4 { animation-delay: 0.55s; opacity: 0; }
+  .hero-d5 { animation-delay: 0.7s; opacity: 0; }
+
+  /* ── Counter animation ───────────────────────────────── */
+  @keyframes countFade {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .count-up {
+    animation: countFade 0.7s ease forwards;
+  }
+
+  /* ── Shimmer ─────────────────────────────────────────── */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, transparent 0%, hsl(40 30% 99% / 0.08) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* ── Scroll indicator bounce ─────────────────────────── */
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+  .scroll-indicator {
+    animation: scrollBounce 2s ease-in-out infinite;
   }
 }
