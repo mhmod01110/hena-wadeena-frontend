@@ -33,8 +33,7 @@ function ThemeToggle() {
   );
 }
 
-
-  const [isOpen, setIsOpen] = useState(false);
+export function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
