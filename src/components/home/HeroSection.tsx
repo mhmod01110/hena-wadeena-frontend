@@ -17,23 +17,59 @@ function CardDeck() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [isTouchFanned, setIsTouchFanned] = useState(false);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!deckRef.current) return;
     const rect = deckRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 to 0.5
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
     setMousePos({ x, y });
   }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!isTouchFanned) {
+      setIsTouchFanned(true);
+      setMousePos({ x: 0, y: 0 });
+      return;
+    }
+    if (!deckRef.current) return;
+    const touch = e.touches[0];
+    const rect = deckRef.current.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    setMousePos({ x, y: 0 });
+  }, [isTouchFanned]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!deckRef.current || !isTouchFanned) return;
+    const touch = e.touches[0];
+    const rect = deckRef.current.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) / rect.width - 0.5;
+    setMousePos({ x, y: 0 });
+
+    // Detect which card is under the touch
+    const cardWidth = 160;
+    const total = navCards.length;
+    const mid = (total - 1) / 2;
+    for (let i = total - 1; i >= 0; i--) {
+      const offset = i - mid;
+      const cardCenterX = rect.left + rect.width / 2 + offset * 55 + x * 15;
+      if (Math.abs(touch.clientX - cardCenterX) < cardWidth / 2) {
+        setHoveredIndex(i);
+        break;
+      }
+    }
+  }, [isTouchFanned]);
+
+  const fanned = isHovering || isTouchFanned;
 
   const getCardStyle = (index: number, total: number) => {
     const mid = (total - 1) / 2;
     const offset = index - mid;
 
-    if (isHovering) {
-      // Fan out like playing cards
+    if (fanned) {
       const fanAngle = offset * 8 + mousePos.x * 5;
-      const fanX = offset * 65 + mousePos.x * 15;
+      const fanX = offset * 55 + mousePos.x * 15;
       const fanY = Math.abs(offset) * 12 - (hoveredIndex === index ? 30 : 0);
       const scale = hoveredIndex === index ? 1.1 : 1;
       const z = hoveredIndex === index ? 50 : total - Math.abs(offset);
@@ -45,7 +81,6 @@ function CardDeck() {
       };
     }
 
-    // Stacked with slight offset
     const stackY = -index * 3;
     const stackX = index * 2;
     const stackRotate = (index - mid) * 1.5;
@@ -56,13 +91,28 @@ function CardDeck() {
     };
   };
 
+  // Close fan when tapping outside
+  useEffect(() => {
+    if (!isTouchFanned) return;
+    const handler = (e: TouchEvent) => {
+      if (deckRef.current && !deckRef.current.contains(e.target as Node)) {
+        setIsTouchFanned(false);
+        setHoveredIndex(null);
+      }
+    };
+    document.addEventListener("touchstart", handler);
+    return () => document.removeEventListener("touchstart", handler);
+  }, [isTouchFanned]);
+
   return (
     <div
       ref={deckRef}
-      className="relative h-[220px] w-full max-w-[380px] mx-auto sm:mx-0 flex items-center justify-center"
+      className="relative h-[220px] w-full max-w-[380px] mx-auto sm:mx-0 flex items-center justify-center touch-manipulation"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => { setIsHovering(false); setHoveredIndex(null); }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
     >
       {navCards.map((item, index) => {
         const Icon = item.icon;
@@ -71,19 +121,22 @@ function CardDeck() {
           <Link
             key={item.href}
             to={item.href}
-            className="absolute w-[160px] h-[190px] cursor-pointer"
+            className="absolute w-[140px] sm:w-[160px] h-[170px] sm:h-[190px] cursor-pointer"
             style={style}
             onMouseEnter={() => setHoveredIndex(index)}
+            onTouchEnd={(e) => {
+              if (!isTouchFanned) { e.preventDefault(); return; }
+              setHoveredIndex(index);
+            }}
           >
-            <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${item.color} p-5 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/20 backdrop-blur-sm hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] transition-shadow duration-300`}>
-              <div className="h-14 w-14 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                <Icon className="h-7 w-7 text-white" strokeWidth={1.8} />
+            <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${item.color} p-4 sm:p-5 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/20 backdrop-blur-sm transition-shadow duration-300`}>
+              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" strokeWidth={1.8} />
               </div>
               <div className="text-center">
-                <div className="font-bold text-white text-base">{item.label}</div>
-                <div className="text-xs text-white/70 mt-0.5">{item.desc}</div>
+                <div className="font-bold text-white text-sm sm:text-base">{item.label}</div>
+                <div className="text-[11px] sm:text-xs text-white/70 mt-0.5">{item.desc}</div>
               </div>
-              <ArrowLeft className="h-4 w-4 text-white/50 absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </Link>
         );
@@ -200,7 +253,7 @@ export function HeroSection() {
           {/* Card Deck Navigation */}
           <div className="hero-reveal hero-d4 mb-12">
             <CardDeck />
-            <p className="text-card/50 text-xs mt-4 text-center sm:text-right">مرّر الماوس على الكروت لاستكشاف الأقسام ✨</p>
+            <p className="text-card/50 text-xs mt-4 text-center sm:text-right">المس أو مرّر على الكروت لاستكشاف الأقسام ✨</p>
           </div>
 
           {/* Animated Stats */}
