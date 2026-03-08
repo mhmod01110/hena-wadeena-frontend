@@ -34,6 +34,7 @@ function ThemeToggle() {
 }
 
 export function Header() {
+  const [isOpen, setIsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
