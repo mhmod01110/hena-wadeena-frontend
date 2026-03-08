@@ -15,7 +15,25 @@ const navigation = [
   { name: "الاستثمار", href: "/investment" },
 ];
 
-export function Header() {
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <Button variant="ghost" size="icon" className="text-muted-foreground"><Sun className="h-5 w-5" /></Button>;
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="text-muted-foreground hover:text-foreground"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="تبديل الوضع"
+    >
+      {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+    </Button>
+  );
+}
+
+
   const [isOpen, setIsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
