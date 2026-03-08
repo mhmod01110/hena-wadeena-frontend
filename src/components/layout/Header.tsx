@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, MapPin, User, Search, Bell, Wallet, LogOut, Settings, CalendarCheck, ChevronDown } from "lucide-react";
+import { Menu, X, MapPin, User, Search, Bell, Wallet, LogOut, Settings, CalendarCheck, ChevronDown, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { notificationsAPI } from "@/services/api";
+import { useTheme } from "next-themes";
 
 const navigation = [
   { name: "الرئيسية", href: "/" },
@@ -13,6 +14,24 @@ const navigation = [
   { name: "اللوجستيات", href: "/logistics" },
   { name: "الاستثمار", href: "/investment" },
 ];
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <Button variant="ghost" size="icon" className="text-muted-foreground"><Sun className="h-5 w-5" /></Button>;
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="text-muted-foreground hover:text-foreground"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="تبديل الوضع"
+    >
+      {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+    </Button>
+  );
+}
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +100,8 @@ export function Header() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-1">
+          {/* Dark mode toggle */}
+          <ThemeToggle />
           {/* Search */}
           <Link to="/search">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
