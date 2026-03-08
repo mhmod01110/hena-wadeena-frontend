@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, MapPin, User, Search, Bell, Wallet, LogOut, Settings, CalendarCheck, ChevronDown } from "lucide-react";
+import { Menu, X, MapPin, User, Search, Bell, Wallet, LogOut, Settings, CalendarCheck, ChevronDown, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { notificationsAPI } from "@/services/api";
+import { useTheme } from "next-themes";
 
 const navigation = [
   { name: "الرئيسية", href: "/" },
@@ -81,6 +82,8 @@ export function Header() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-1">
+          {/* Dark mode toggle */}
+          <ThemeToggle />
           {/* Search */}
           <Link to="/search">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
