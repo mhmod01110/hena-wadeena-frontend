@@ -1,7 +1,96 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ArrowLeft, Sparkles, Mountain, ShoppingBag, Truck, TrendingUp, Users, Compass } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-desert-oasis.jpg";
+
+const navCards = [
+  { icon: Mountain, label: "السياحة", desc: "اكتشف المعالم", href: "/tourism", color: "from-emerald-500 to-teal-600" },
+  { icon: ShoppingBag, label: "البورصة", desc: "أسعار اليوم", href: "/marketplace", color: "from-amber-500 to-orange-600" },
+  { icon: Truck, label: "المواصلات", desc: "خطوط وحجز", href: "/logistics", color: "from-sky-500 to-blue-600" },
+  { icon: TrendingUp, label: "الاستثمار", desc: "فرص واعدة", href: "/investment", color: "from-violet-500 to-purple-600" },
+  { icon: Users, label: "المرشدين", desc: "دليلك المحلي", href: "/guides", color: "from-pink-500 to-rose-600" },
+  { icon: Compass, label: "المعالم", desc: "أماكن مميزة", href: "/tourism/attractions", color: "from-cyan-500 to-indigo-600" },
+];
+
+function CardDeck() {
+  const deckRef = useRef<HTMLDivElement>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!deckRef.current) return;
+    const rect = deckRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 to 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setMousePos({ x, y });
+  }, []);
+
+  const getCardStyle = (index: number, total: number) => {
+    const mid = (total - 1) / 2;
+    const offset = index - mid;
+
+    if (isHovering) {
+      // Fan out like playing cards
+      const fanAngle = offset * 8 + mousePos.x * 5;
+      const fanX = offset * 65 + mousePos.x * 15;
+      const fanY = Math.abs(offset) * 12 - (hoveredIndex === index ? 30 : 0);
+      const scale = hoveredIndex === index ? 1.1 : 1;
+      const z = hoveredIndex === index ? 50 : total - Math.abs(offset);
+
+      return {
+        transform: `translateX(${fanX}px) translateY(${fanY}px) rotate(${fanAngle}deg) scale(${scale})`,
+        zIndex: z,
+        transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+      };
+    }
+
+    // Stacked with slight offset
+    const stackY = -index * 3;
+    const stackX = index * 2;
+    const stackRotate = (index - mid) * 1.5;
+    return {
+      transform: `translateX(${stackX}px) translateY(${stackY}px) rotate(${stackRotate}deg) scale(${1 - index * 0.015})`,
+      zIndex: total - index,
+      transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    };
+  };
+
+  return (
+    <div
+      ref={deckRef}
+      className="relative h-[220px] w-full max-w-[380px] mx-auto sm:mx-0 flex items-center justify-center"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => { setIsHovering(false); setHoveredIndex(null); }}
+    >
+      {navCards.map((item, index) => {
+        const Icon = item.icon;
+        const style = getCardStyle(index, navCards.length);
+        return (
+          <Link
+            key={item.href}
+            to={item.href}
+            className="absolute w-[160px] h-[190px] cursor-pointer"
+            style={style}
+            onMouseEnter={() => setHoveredIndex(index)}
+          >
+            <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${item.color} p-5 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/20 backdrop-blur-sm hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] transition-shadow duration-300`}>
+              <div className="h-14 w-14 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                <Icon className="h-7 w-7 text-white" strokeWidth={1.8} />
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-white text-base">{item.label}</div>
+                <div className="text-xs text-white/70 mt-0.5">{item.desc}</div>
+              </div>
+              <ArrowLeft className="h-4 w-4 text-white/50 absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
 
 function Counter({ target, label, delay }: { target: number; label: string; delay: number }) {
   const [val, setVal] = useState(0);
@@ -108,35 +197,10 @@ export function HeroSection() {
             بوابتك الشاملة للوادي الجديد — من المواصلات والأسعار إلى فرص الاستثمار والسياحة. كل ما تحتاجه في مكان واحد.
           </p>
 
-          {/* Quick Navigation Cards */}
-          <div className="hero-reveal hero-d4 grid grid-cols-2 sm:grid-cols-3 gap-3 mb-12">
-            {[
-              { icon: Mountain, label: "السياحة", desc: "اكتشف المعالم", href: "/tourism", delay: "0ms" },
-              { icon: ShoppingBag, label: "البورصة", desc: "أسعار اليوم", href: "/marketplace", delay: "50ms" },
-              { icon: Truck, label: "المواصلات", desc: "خطوط وحجز", href: "/logistics", delay: "100ms" },
-              { icon: TrendingUp, label: "الاستثمار", desc: "فرص واعدة", href: "/investment", delay: "150ms" },
-              { icon: Users, label: "المرشدين", desc: "دليلك المحلي", href: "/guides", delay: "200ms" },
-              { icon: Compass, label: "المعالم", desc: "أماكن مميزة", href: "/tourism/attractions", delay: "250ms" },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className="group relative flex items-center gap-3 p-4 rounded-2xl glass hover:bg-card/20 transition-all duration-300 hover:scale-[1.04] hover:shadow-xl cursor-pointer"
-                  style={{ animationDelay: item.delay }}
-                >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/20 group-hover:bg-accent/30 transition-colors duration-300">
-                    <Icon className="h-6 w-6 text-accent" strokeWidth={1.8} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-bold text-card text-sm">{item.label}</div>
-                    <div className="text-xs text-card/60">{item.desc}</div>
-                  </div>
-                  <ArrowLeft className="h-4 w-4 text-card/40 mr-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                </Link>
-              );
-            })}
+          {/* Card Deck Navigation */}
+          <div className="hero-reveal hero-d4 mb-12">
+            <CardDeck />
+            <p className="text-card/50 text-xs mt-4 text-center sm:text-right">مرّر الماوس على الكروت لاستكشاف الأقسام ✨</p>
           </div>
 
           {/* Animated Stats */}
