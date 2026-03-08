@@ -25,8 +25,6 @@ import NotificationsPage from "./pages/profile/NotificationsPage";
 import GuidesPage from "./pages/guides/GuidesPage";
 import GuideProfilePage from "./pages/guides/GuideProfilePage";
 
-// Search
-import SearchResultsPage from "./pages/search/SearchResultsPage";
 
 // Logistics pages
 import CreateTripPage from "./pages/logistics/CreateTripPage";
@@ -71,7 +69,7 @@ const App = () => (
           <Route path="/guides" element={<GuidesPage />} />
           <Route path="/guides/:id" element={<GuideProfilePage />} />
           {/* Search */}
-          <Route path="/search" element={<SearchResultsPage />} />
+          
           {/* Tourism */}
           <Route path="/tourism" element={<TourismPage />} />
           <Route path="/tourism/attractions" element={<AttractionsPage />} />

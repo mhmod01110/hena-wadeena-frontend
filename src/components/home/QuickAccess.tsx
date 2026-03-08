@@ -34,7 +34,7 @@ export function QuickAccess() {
           <h2 className="text-3xl font-bold">مرحباً، {user.full_name} 👋</h2>
           <p className="text-muted-foreground mt-2 text-lg">الوصول السريع لحسابك</p>
         </div>
-        <SR stagger className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5 max-w-3xl mx-auto">
+        <SR stagger className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-3xl mx-auto">
           {quickLinks.map((link) => {
             const Icon = link.icon;
             const isNotif = link.href === "/notifications";
