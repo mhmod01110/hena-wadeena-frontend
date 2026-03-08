@@ -253,7 +253,7 @@ export function HeroSection() {
           {/* Card Deck Navigation */}
           <div className="hero-reveal hero-d4 mb-12">
             <CardDeck />
-            <p className="text-card/50 text-xs mt-4 text-center sm:text-right">مرّر الماوس على الكروت لاستكشاف الأقسام ✨</p>
+            <p className="text-card/50 text-xs mt-4 text-center sm:text-right">المس أو مرّر على الكروت لاستكشاف الأقسام ✨</p>
           </div>
 
           {/* Animated Stats */}
