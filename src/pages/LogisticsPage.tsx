@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { logisticsAPI, type TransportRoute, type Station, type Carpool } from "@/services/api";
 import { SR } from "@/components/motion/ScrollReveal";
-import { PageTransition, GradientMesh } from "@/components/motion/PageTransition";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { Skeleton } from "@/components/motion/Skeleton";
+import { PageHero } from "@/components/layout/PageHero";
+import heroLogistics from "@/assets/hero-logistics.jpg";
 
 const LogisticsPage = () => {
   const navigate = useNavigate();
@@ -33,48 +35,43 @@ const LogisticsPage = () => {
     <Layout>
       <PageTransition>
         {/* Hero Section */}
-        <section className="relative gradient-hero py-20 md:py-28 overflow-hidden">
-          <GradientMesh className="opacity-30" />
-          <div className="container relative px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <SR>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6">
-                  <Bus className="h-5 w-5 text-primary-foreground" />
-                  <span className="text-sm font-semibold text-primary-foreground">اللوجستيات والتنقل</span>
-                </div>
-              </SR>
-              <SR delay={100}>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-5">
-                  اللوجستيات والتنقل
-                </h1>
-              </SR>
-              <SR delay={200}>
-                <p className="text-lg md:text-xl text-primary-foreground/90 mb-10">
-                  ابحث عن خطوط المواصلات، المحطات، أو شارك رحلتك مع الآخرين
-                </p>
-              </SR>
-
-              {/* Search Form */}
-              <SR delay={300}>
-                <div className="glass rounded-2xl p-5 md:p-7 shadow-2xl">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="relative">
-                      <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                      <Input placeholder="من أين؟" value={searchFrom} onChange={(e) => setSearchFrom(e.target.value)} className="pr-12 h-14 rounded-xl text-base" />
-                    </div>
-                    <div className="relative">
-                      <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                      <Input placeholder="إلى أين؟" value={searchTo} onChange={(e) => setSearchTo(e.target.value)} className="pr-12 h-14 rounded-xl text-base" />
-                    </div>
-                    <Button size="lg" className="h-14 rounded-xl text-base hover:scale-[1.02] transition-transform">
-                      <Search className="h-5 w-5 ml-2" />بحث
-                    </Button>
-                  </div>
-                </div>
-              </SR>
+        <PageHero image={heroLogistics} alt="اللوجستيات والتنقل">
+          <SR>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+              <Bus className="h-5 w-5 text-accent" />
+              <span className="text-sm font-semibold text-card">اللوجستيات والتنقل</span>
             </div>
-          </div>
-        </section>
+          </SR>
+          <SR delay={100}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-card mb-5">
+              اللوجستيات والتنقل
+            </h1>
+          </SR>
+          <SR delay={200}>
+            <p className="text-lg md:text-xl text-card/90 mb-10">
+              ابحث عن خطوط المواصلات، المحطات، أو شارك رحلتك مع الآخرين
+            </p>
+          </SR>
+
+          {/* Search Form */}
+          <SR delay={300}>
+            <div className="glass rounded-2xl p-5 md:p-7 shadow-2xl">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="relative">
+                  <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input placeholder="من أين؟" value={searchFrom} onChange={(e) => setSearchFrom(e.target.value)} className="pr-12 h-14 rounded-xl text-base" />
+                </div>
+                <div className="relative">
+                  <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input placeholder="إلى أين؟" value={searchTo} onChange={(e) => setSearchTo(e.target.value)} className="pr-12 h-14 rounded-xl text-base" />
+                </div>
+                <Button size="lg" className="h-14 rounded-xl text-base hover:scale-[1.02] transition-transform">
+                  <Search className="h-5 w-5 ml-2" />بحث
+                </Button>
+              </div>
+            </div>
+          </SR>
+        </PageHero>
 
         {/* Content Tabs */}
         <section className="py-14">
