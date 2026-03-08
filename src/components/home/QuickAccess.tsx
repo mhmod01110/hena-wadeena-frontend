@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Wallet, Bell, CalendarCheck, Search } from "lucide-react";
+import { User, Wallet, Bell, CalendarCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { notificationsAPI } from "@/services/api";
@@ -11,7 +11,6 @@ const quickLinks = [
   { icon: Wallet, label: "المحفظة", href: "/wallet", gradient: "from-green-500 to-emerald-600", bg: "bg-green-500/10" },
   { icon: CalendarCheck, label: "حجوزاتي", href: "/bookings", gradient: "from-purple-500 to-violet-600", bg: "bg-purple-500/10" },
   { icon: Bell, label: "الإشعارات", href: "/notifications", gradient: "from-red-500 to-rose-600", bg: "bg-red-500/10" },
-  { icon: Search, label: "بحث", href: "/search", gradient: "from-sky-500 to-cyan-600", bg: "bg-sky-500/10" },
 ];
 
 export function QuickAccess() {
@@ -35,7 +34,7 @@ export function QuickAccess() {
           <h2 className="text-3xl font-bold">مرحباً، {user.full_name} 👋</h2>
           <p className="text-muted-foreground mt-2 text-lg">الوصول السريع لحسابك</p>
         </div>
-        <SR stagger className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5 max-w-3xl mx-auto">
+        <SR stagger className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-3xl mx-auto">
           {quickLinks.map((link) => {
             const Icon = link.icon;
             const isNotif = link.href === "/notifications";
