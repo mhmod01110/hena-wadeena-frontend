@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, MapPin, Search, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Sparkles, Mountain, ShoppingBag, Truck, TrendingUp, Users, Compass } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-desert-oasis.jpg";
 
 function Counter({ target, label, delay }: { target: number; label: string; delay: number }) {
@@ -36,8 +34,6 @@ function Counter({ target, label, delay }: { target: number; label: string; dela
 }
 
 export function HeroSection() {
-  const navigate = useNavigate();
-  const [query, setQuery] = useState("");
   const [scrollY, setScrollY] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
@@ -59,8 +55,6 @@ export function HeroSection() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const go = () => { if (query.trim()) navigate(`/search?q=${encodeURIComponent(query)}`); };
 
   const parallaxY = scrollY * 0.3;
   const heroOpacity = Math.max(0, 1 - scrollY / 700);
@@ -114,26 +108,35 @@ export function HeroSection() {
             بوابتك الشاملة للوادي الجديد — من المواصلات والأسعار إلى فرص الاستثمار والسياحة. كل ما تحتاجه في مكان واحد.
           </p>
 
-          {/* Search Bar */}
-          <div className="hero-reveal hero-d4 flex flex-col sm:flex-row gap-3 mb-12">
-            <div className="relative flex-1 group">
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground transition-colors group-focus-within:text-primary" />
-              <Input
-                placeholder="ابحث عن مواصلات، أسعار، فرص استثمارية..."
-                className="pr-14 h-16 bg-card/95 border-0 text-lg rounded-2xl shadow-xl focus:ring-2 focus:ring-primary/40 transition-shadow duration-300 focus:shadow-2xl"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && go()}
-              />
-            </div>
-            <Button
-              size="lg"
-              className="h-16 px-10 text-lg rounded-2xl shadow-xl btn-press hover:shadow-2xl transition-all duration-300 hover:scale-[1.03]"
-              onClick={go}
-            >
-              ابحث
-              <ArrowLeft className="h-5 w-5 mr-2" />
-            </Button>
+          {/* Quick Navigation Cards */}
+          <div className="hero-reveal hero-d4 grid grid-cols-2 sm:grid-cols-3 gap-3 mb-12">
+            {[
+              { icon: Mountain, label: "السياحة", desc: "اكتشف المعالم", href: "/tourism", delay: "0ms" },
+              { icon: ShoppingBag, label: "البورصة", desc: "أسعار اليوم", href: "/marketplace", delay: "50ms" },
+              { icon: Truck, label: "المواصلات", desc: "خطوط وحجز", href: "/logistics", delay: "100ms" },
+              { icon: TrendingUp, label: "الاستثمار", desc: "فرص واعدة", href: "/investment", delay: "150ms" },
+              { icon: Users, label: "المرشدين", desc: "دليلك المحلي", href: "/guides", delay: "200ms" },
+              { icon: Compass, label: "المعالم", desc: "أماكن مميزة", href: "/tourism/attractions", delay: "250ms" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className="group relative flex items-center gap-3 p-4 rounded-2xl glass hover:bg-card/20 transition-all duration-300 hover:scale-[1.04] hover:shadow-xl cursor-pointer"
+                  style={{ animationDelay: item.delay }}
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/20 group-hover:bg-accent/30 transition-colors duration-300">
+                    <Icon className="h-6 w-6 text-accent" strokeWidth={1.8} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-card text-sm">{item.label}</div>
+                    <div className="text-xs text-card/60">{item.desc}</div>
+                  </div>
+                  <ArrowLeft className="h-4 w-4 text-card/40 mr-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                </Link>
+              );
+            })}
           </div>
 
           {/* Animated Stats */}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, MapPin, User, Search, Bell, Wallet, LogOut, Settings, CalendarCheck, ChevronDown, Moon, Sun } from "lucide-react";
+import { Menu, X, MapPin, User, Bell, Wallet, LogOut, Settings, CalendarCheck, ChevronDown, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { notificationsAPI } from "@/services/api";
@@ -102,13 +102,6 @@ export function Header() {
         <div className="hidden md:flex items-center gap-1">
           {/* Dark mode toggle */}
           <ThemeToggle />
-          {/* Search */}
-          <Link to="/search">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <Search className="h-5 w-5" />
-            </Button>
-          </Link>
-
           {user ? (
             <>
               {/* Notifications Bell */}
@@ -241,12 +234,6 @@ export function Header() {
                     </div>
                   </div>
                 )}
-
-                {/* Search bar */}
-                <Link to="/search" onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted/50 text-muted-foreground">
-                  <Search className="h-5 w-5" /> بحث في المنصة...
-                </Link>
 
                 {/* Nav links */}
                 <nav className="flex flex-col gap-1">
