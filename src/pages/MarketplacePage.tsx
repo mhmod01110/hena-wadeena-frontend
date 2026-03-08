@@ -10,8 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { marketAPI, type PriceItem, type Supplier } from "@/services/api";
 import { SR } from "@/components/motion/ScrollReveal";
-import { PageTransition, GradientMesh } from "@/components/motion/PageTransition";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { Skeleton } from "@/components/motion/Skeleton";
+import { PageHero } from "@/components/layout/PageHero";
+import heroMarketplace from "@/assets/hero-marketplace.jpg";
 
 const cities = [
   { id: "kharga", name: "الخارجة" },
@@ -43,29 +45,24 @@ const MarketplacePage = () => {
     <Layout>
       <PageTransition>
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-bl from-accent/20 via-background to-background py-20 md:py-28 overflow-hidden">
-          <GradientMesh />
-          <div className="container relative px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <SR>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-6">
-                  <BarChart3 className="h-5 w-5 text-accent" />
-                  <span className="text-sm font-semibold text-accent">البورصة والأسعار</span>
-                </div>
-              </SR>
-              <SR delay={100}>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-5">
-                  البورصة والأسعار
-                </h1>
-              </SR>
-              <SR delay={200}>
-                <p className="text-lg md:text-xl text-muted-foreground mb-8">
-                  أسعار المنتجات المحلية، دليل الموردين، والتواصل المباشر
-                </p>
-              </SR>
+        <PageHero image={heroMarketplace} alt="البورصة والأسعار">
+          <SR>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+              <BarChart3 className="h-5 w-5 text-accent" />
+              <span className="text-sm font-semibold text-card">البورصة والأسعار</span>
             </div>
-          </div>
-        </section>
+          </SR>
+          <SR delay={100}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-card mb-5">
+              البورصة والأسعار
+            </h1>
+          </SR>
+          <SR delay={200}>
+            <p className="text-lg md:text-xl text-card/90 mb-8">
+              أسعار المنتجات المحلية، دليل الموردين، والتواصل المباشر
+            </p>
+          </SR>
+        </PageHero>
 
         {/* Content */}
         <section className="py-14">

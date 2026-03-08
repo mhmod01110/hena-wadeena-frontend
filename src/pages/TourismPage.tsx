@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { tourismAPI, type Attraction, type Guide, type Accommodation } from "@/services/api";
 import { SR } from "@/components/motion/ScrollReveal";
-import { PageTransition, GradientMesh } from "@/components/motion/PageTransition";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { CardSkeleton, Skeleton } from "@/components/motion/Skeleton";
+import { PageHero } from "@/components/layout/PageHero";
+import heroTourism from "@/assets/hero-tourism.jpg";
 
 const TourismPage = () => {
   const navigate = useNavigate();
@@ -31,39 +33,33 @@ const TourismPage = () => {
     <Layout>
       <PageTransition>
         {/* Hero Section */}
-        <section className="relative py-20 md:py-28 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-background" />
-          <GradientMesh />
-          <div className="container relative px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <SR>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-semibold text-primary">السياحة والمجتمع</span>
-                </div>
-              </SR>
-              <SR delay={100}>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-5">
-                  السياحة والمجتمع
-                </h1>
-              </SR>
-              <SR delay={200}>
-                <p className="text-lg md:text-xl text-muted-foreground mb-10">
-                  اكتشف المعالم السياحية، احجز مرشداً، أو ابحث عن سكن للطلاب
-                </p>
-              </SR>
-              <SR delay={300}>
-                <div className="relative max-w-xl mx-auto">
-                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
-                  <Input
-                    placeholder="ابحث عن معالم، مرشدين، أو سكن..."
-                    className="pr-14 h-16 text-lg rounded-2xl shadow-lg border-0 bg-card/90 backdrop-blur-sm"
-                  />
-                </div>
-              </SR>
+        <PageHero image={heroTourism} alt="السياحة في الوادي الجديد">
+          <SR>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6">
+              <MapPin className="h-5 w-5 text-accent" />
+              <span className="text-sm font-semibold text-card">السياحة والمجتمع</span>
             </div>
-          </div>
-        </section>
+          </SR>
+          <SR delay={100}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-card mb-5">
+              السياحة والمجتمع
+            </h1>
+          </SR>
+          <SR delay={200}>
+            <p className="text-lg md:text-xl text-card/90 mb-10">
+              اكتشف المعالم السياحية، احجز مرشداً، أو ابحث عن سكن للطلاب
+            </p>
+          </SR>
+          <SR delay={300}>
+            <div className="relative max-w-xl mx-auto">
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+              <Input
+                placeholder="ابحث عن معالم، مرشدين، أو سكن..."
+                className="pr-14 h-16 text-lg rounded-2xl shadow-lg border-0 bg-card/90 backdrop-blur-sm"
+              />
+            </div>
+          </SR>
+        </PageHero>
 
         {/* Content */}
         <section className="py-14">
