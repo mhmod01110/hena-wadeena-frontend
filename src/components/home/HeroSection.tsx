@@ -1,11 +1,10 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, MapPin, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-desert-oasis.jpg";
 
-/* Animated counter — counts from 0 to `target` on mount */
 function Counter({ target, label, delay }: { target: number; label: string; delay: number }) {
   const [val, setVal] = useState(0);
   const [show, setShow] = useState(false);
@@ -17,8 +16,7 @@ function Counter({ target, label, delay }: { target: number; label: string; dela
 
   useEffect(() => {
     if (!show) return;
-    let start = 0;
-    const dur = 1800;
+    const dur = 2000;
     const t0 = performance.now();
     const tick = (now: number) => {
       const p = Math.min((now - t0) / dur, 1);
@@ -41,19 +39,39 @@ export function HeroSection() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [scrollY, setScrollY] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const go = () => { if (query.trim()) navigate(`/search?q=${encodeURIComponent(query)}`); };
 
+  const parallaxY = scrollY * 0.3;
+  const heroOpacity = Math.max(0, 1 - scrollY / 700);
+
   return (
     <section className="relative min-h-[95vh] flex items-center overflow-hidden">
       {/* Parallax Background */}
-      <div className="absolute inset-0 will-change-transform" style={{ transform: `translateY(${scrollY * 0.25}px)` }}>
+      <div
+        className="absolute inset-0 will-change-transform transition-transform duration-75"
+        style={{ transform: `translateY(${parallaxY}px) scale(${loaded ? 1 : 1.1})`, transition: loaded ? 'transform 0.075s linear' : 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
+      >
         <img src={heroImage} alt="الوادي الجديد" className="w-full h-[130%] object-cover" />
         <div className="absolute inset-0 bg-gradient-to-l from-foreground/85 via-foreground/65 to-foreground/40" />
       </div>
@@ -67,13 +85,15 @@ export function HeroSection() {
           "top-[28%] right-[42%] h-2.5 w-2.5 bg-accent/20 particle-4",
           "top-[68%] right-[55%] h-2 w-2 bg-primary/15 particle-1",
           "top-[12%] right-[68%] h-3 w-3 bg-card/15 particle-3",
+          "top-[78%] right-[35%] h-1.5 w-1.5 bg-accent/25 particle-2",
+          "top-[8%] right-[50%] h-2 w-2 bg-card/20 particle-4",
         ].map((cls, i) => (
           <div key={i} className={`particle absolute rounded-full ${cls}`} />
         ))}
       </div>
 
-      {/* Content */}
-      <div className="container relative z-10 px-4 py-20">
+      {/* Content with fade on scroll */}
+      <div className="container relative z-10 px-4 py-20" style={{ opacity: heroOpacity }}>
         <div className="max-w-2xl">
           {/* Badge */}
           <div className="hero-reveal hero-d1 inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass mb-8">
@@ -96,17 +116,21 @@ export function HeroSection() {
 
           {/* Search Bar */}
           <div className="hero-reveal hero-d4 flex flex-col sm:flex-row gap-3 mb-12">
-            <div className="relative flex-1">
-              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+            <div className="relative flex-1 group">
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <Input
                 placeholder="ابحث عن مواصلات، أسعار، فرص استثمارية..."
-                className="pr-14 h-16 bg-card/95 border-0 text-lg rounded-2xl shadow-xl focus:ring-2 focus:ring-primary/40"
+                className="pr-14 h-16 bg-card/95 border-0 text-lg rounded-2xl shadow-xl focus:ring-2 focus:ring-primary/40 transition-shadow duration-300 focus:shadow-2xl"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && go()}
               />
             </div>
-            <Button size="lg" className="h-16 px-10 text-lg rounded-2xl shadow-xl hover:scale-[1.03] transition-transform" onClick={go}>
+            <Button
+              size="lg"
+              className="h-16 px-10 text-lg rounded-2xl shadow-xl btn-press hover:shadow-2xl transition-all duration-300 hover:scale-[1.03]"
+              onClick={go}
+            >
               ابحث
               <ArrowLeft className="h-5 w-5 mr-2" />
             </Button>
@@ -122,7 +146,7 @@ export function HeroSection() {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator" style={{ opacity: heroOpacity }}>
         <div className="w-7 h-11 rounded-full border-2 border-card/30 flex items-start justify-center p-1.5">
           <div className="w-1.5 h-2.5 rounded-full bg-card/50" />
         </div>
