@@ -133,6 +133,8 @@ export type Database = {
         | "student"
         | "resident"
         | "driver"
+        | "moderator"
+        | "reviewer"
       document_type:
         | "national_id"
         | "commercial_register"
@@ -281,6 +283,8 @@ export const Constants = {
         "student",
         "resident",
         "driver",
+        "moderator",
+        "reviewer",
       ],
       document_type: [
         "national_id",
