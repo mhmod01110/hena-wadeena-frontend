@@ -41,7 +41,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateUserStatus = async (userId: string, status: string) => {
+  const updateUserStatus = async (userId: string, status: "active" | "inactive" | "suspended" | "pending_verification") => {
     try {
       const { error } = await supabase
         .from("profiles")
