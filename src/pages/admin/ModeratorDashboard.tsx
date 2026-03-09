@@ -1,14 +1,33 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, MessageSquare, Calendar, TrendingUp } from "lucide-react";
+import { Users, MessageSquare, Calendar, TrendingUp, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
+type CoordinationTask = {
+  id: string;
+  title: string;
+  role: string;
+  owner: string;
+  status: "pending" | "in_progress" | "done";
+};
 
 export default function ModeratorDashboard() {
   const [roleStats, setRoleStats] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
+  const [profiles, setProfiles] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<CoordinationTask[]>([
+    { id: "task-1", title: "تنسيق رحلة سياحية جماعية", role: "tourist", owner: "منسق السياحة", status: "pending" },
+    { id: "task-2", title: "متابعة احتياج تجار السوق", role: "merchant", owner: "منسق السوق", status: "in_progress" },
+  ]);
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskRole, setTaskRole] = useState("tourist");
+  const [taskOwner, setTaskOwner] = useState("");
 
   useEffect(() => {
     fetchModeratorData();
@@ -16,7 +35,10 @@ export default function ModeratorDashboard() {
 
   const fetchModeratorData = async () => {
     try {
-      const { data: roles } = await supabase.from("user_roles").select("role");
+      const [{ data: roles }, { data: users }] = await Promise.all([
+        supabase.from("user_roles").select("role"),
+        supabase.from("profiles").select("id, user_id, full_name, status"),
+      ]);
 
       if (roles) {
         const stats = roles.reduce((acc: Record<string, number>, r) => {
@@ -25,28 +47,72 @@ export default function ModeratorDashboard() {
         }, {});
         setRoleStats(stats);
       }
-    } catch (error) {
+
+      setProfiles(users || []);
+    } catch {
       toast.error("Failed to load moderator data");
-    } finally {
-      setLoading(false);
     }
   };
 
+  const roleGroups = useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    profiles.forEach((profile) => {
+      const fallbackRole = "unassigned";
+      const role = Object.keys(roleStats).find((r) => r && r !== "admin") || fallbackRole;
+      if (!groups[role]) groups[role] = [];
+      groups[role].push(profile);
+    });
+    return groups;
+  }, [profiles, roleStats]);
+
+  const addTask = () => {
+    if (!taskTitle.trim()) return;
+    const newTask: CoordinationTask = {
+      id: `task-${Date.now()}`,
+      title: taskTitle.trim(),
+      role: taskRole,
+      owner: taskOwner.trim() || "منسق عام",
+      status: "pending",
+    };
+    setTasks((prev) => [newTask, ...prev]);
+    setTaskTitle("");
+    setTaskOwner("");
+  };
+
+  const cycleTask = (id: string) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              status:
+                task.status === "pending"
+                  ? "in_progress"
+                  : task.status === "in_progress"
+                    ? "done"
+                    : "pending",
+            }
+          : task,
+      ),
+    );
+  };
+
+  const deleteTask = (id: string) => setTasks((prev) => prev.filter((task) => task.id !== id));
+
   return (
     <Layout>
-      <div className="container py-8 px-4">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="container py-8 px-4 space-y-8">
+        <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
             <Users className="h-6 w-6 text-primary" />
           </div>
           <div>
             <h1 className="text-3xl font-bold">لوحة تحكم المنسق</h1>
-            <p className="text-muted-foreground">التنسيق بين الأدوار المختلفة</p>
+            <p className="text-muted-foreground">تنظيم الأدوار + CRUD تجريبي لمهام التنسيق</p>
           </div>
         </div>
 
-        {/* Role Distribution */}
-        <div className="grid gap-4 md:grid-cols-4 mb-8">
+        <div className="grid gap-4 md:grid-cols-4">
           {Object.entries(roleStats).map(([role, count]) => (
             <Card key={role}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -60,74 +126,85 @@ export default function ModeratorDashboard() {
           ))}
         </div>
 
-        {/* Coordination Tabs */}
-        <Tabs defaultValue="tourists" className="w-full">
+        <Tabs defaultValue="coordination" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="tourists">السياح</TabsTrigger>
-            <TabsTrigger value="merchants">التجار</TabsTrigger>
-            <TabsTrigger value="investors">المستثمرون</TabsTrigger>
+            <TabsTrigger value="coordination">المهام</TabsTrigger>
+            <TabsTrigger value="roles">تجميع الأدوار</TabsTrigger>
+            <TabsTrigger value="channels">قنوات العمل</TabsTrigger>
           </TabsList>
-          <TabsContent value="tourists">
+
+          <TabsContent value="coordination">
             <Card>
               <CardHeader>
-                <CardTitle>تنسيق السياح</CardTitle>
-                <CardDescription>إدارة وتنسيق أنشطة السياح</CardDescription>
+                <CardTitle>إدارة مهام التنسيق</CardTitle>
+                <CardDescription>CRUD تجريبي لتوزيع المهام بين الأدوار</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Input placeholder="عنوان المهمة" value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} />
+                  <Input placeholder="الدور المستهدف" value={taskRole} onChange={(e) => setTaskRole(e.target.value)} />
+                  <Input placeholder="المسؤول" value={taskOwner} onChange={(e) => setTaskOwner(e.target.value)} />
+                  <Button onClick={addTask} className="gap-2"><Plus className="h-4 w-4" />إضافة مهمة</Button>
+                </div>
+
+                <Table>
+                  <TableHeader><TableRow><TableHead>المهمة</TableHead><TableHead>الدور</TableHead><TableHead>المسؤول</TableHead><TableHead>الحالة</TableHead><TableHead>إجراءات</TableHead></TableRow></TableHeader>
+                  <TableBody>
+                    {tasks.map((task) => (
+                      <TableRow key={task.id}>
+                        <TableCell className="font-medium">{task.title}</TableCell>
+                        <TableCell><Badge variant="secondary">{task.role}</Badge></TableCell>
+                        <TableCell>{task.owner}</TableCell>
+                        <TableCell><Badge variant={task.status === "done" ? "default" : task.status === "in_progress" ? "secondary" : "outline"}>{task.status}</Badge></TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => cycleTask(task.id)}>تبديل</Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteTask(task.id)}><Trash2 className="h-4 w-4" /></Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="roles">
+            <Card>
+              <CardHeader>
+                <CardTitle>تجميع المستخدمين حسب الدور</CardTitle>
+                <CardDescription>متابعة توزيع المستخدمين للتنسيق بين الفرق</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 rounded-lg border border-border">
-                    <Calendar className="h-8 w-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">الجولات المجدولة</h3>
-                      <p className="text-sm text-muted-foreground">عرض وإدارة الجولات السياحية القادمة</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 p-4 rounded-lg border border-border">
-                    <MessageSquare className="h-8 w-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">التواصل مع المرشدين</h3>
-                      <p className="text-sm text-muted-foreground">تنسيق التواصل بين السياح والمرشدين</p>
-                    </div>
-                  </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {Object.entries(roleGroups).map(([role, users]) => (
+                    <Card key={role}>
+                      <CardHeader><CardTitle className="text-lg">{role}</CardTitle></CardHeader>
+                      <CardContent className="space-y-2">
+                        {users.slice(0, 5).map((u) => (
+                          <div key={u.id} className="flex items-center justify-between rounded-md border border-border p-3">
+                            <span>{u.full_name}</span>
+                            <Badge variant={u.status === "active" ? "default" : "secondary"}>{u.status}</Badge>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-          <TabsContent value="merchants">
+
+          <TabsContent value="channels">
             <Card>
               <CardHeader>
-                <CardTitle>تنسيق التجار</CardTitle>
-                <CardDescription>إدارة وتنسيق أنشطة التجار</CardDescription>
+                <CardTitle>قنوات التواصل التنظيمي</CardTitle>
+                <CardDescription>نقاط متابعة بين الفرق</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 rounded-lg border border-border">
-                    <TrendingUp className="h-8 w-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">تتبع المبيعات</h3>
-                      <p className="text-sm text-muted-foreground">مراقبة أداء البائعين</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="investors">
-            <Card>
-              <CardHeader>
-                <CardTitle>تنسيق المستثمرين</CardTitle>
-                <CardDescription>إدارة وتنسيق الفرص الاستثمارية</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-4 rounded-lg border border-border">
-                    <Users className="h-8 w-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold">مطابقة المستثمرين</h3>
-                      <p className="text-sm text-muted-foreground">ربط المستثمرين بالفرص المناسبة</p>
-                    </div>
-                  </div>
-                </div>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4 p-4 rounded-lg border border-border"><Calendar className="h-8 w-8 text-primary" /><div><h3 className="font-semibold">تقويم تشغيلي موحد</h3><p className="text-sm text-muted-foreground">تنسيق الجداول بين السياحة والنقل والسوق</p></div></div>
+                <div className="flex items-center gap-4 p-4 rounded-lg border border-border"><MessageSquare className="h-8 w-8 text-primary" /><div><h3 className="font-semibold">قناة البلاغات</h3><p className="text-sm text-muted-foreground">تجميع ملاحظات الفرق وحل التعارضات</p></div></div>
               </CardContent>
             </Card>
           </TabsContent>

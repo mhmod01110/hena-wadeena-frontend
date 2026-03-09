@@ -30,6 +30,14 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ModeratorDashboard from "./pages/admin/ModeratorDashboard";
 import ReviewerDashboard from "./pages/admin/ReviewerDashboard";
 
+// Role dashboards
+import MerchantDashboard from "./pages/roles/MerchantDashboard";
+import DriverDashboard from "./pages/roles/DriverDashboard";
+import InvestorDashboard from "./pages/roles/InvestorDashboard";
+import TouristDashboard from "./pages/roles/TouristDashboard";
+import StudentDashboard from "./pages/roles/StudentDashboard";
+import ResidentDashboard from "./pages/roles/ResidentDashboard";
+
 // Logistics pages
 import CreateTripPage from "./pages/logistics/CreateTripPage";
 import BookTripPage from "./pages/logistics/BookTripPage";
@@ -76,6 +84,13 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/moderator" element={<ModeratorDashboard />} />
           <Route path="/reviewer" element={<ReviewerDashboard />} />
+          {/* Role Dashboards */}
+          <Route path="/dashboard/merchant" element={<MerchantDashboard />} />
+          <Route path="/dashboard/driver" element={<DriverDashboard />} />
+          <Route path="/dashboard/investor" element={<InvestorDashboard />} />
+          <Route path="/dashboard/tourist" element={<TouristDashboard />} />
+          <Route path="/dashboard/student" element={<StudentDashboard />} />
+          <Route path="/dashboard/resident" element={<ResidentDashboard />} />
           {/* Search */}
           
           {/* Tourism */}
