@@ -25,6 +25,10 @@ import NotificationsPage from "./pages/profile/NotificationsPage";
 import GuidesPage from "./pages/guides/GuidesPage";
 import GuideProfilePage from "./pages/guides/GuideProfilePage";
 
+// Admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ModeratorDashboard from "./pages/admin/ModeratorDashboard";
+import ReviewerDashboard from "./pages/admin/ReviewerDashboard";
 
 // Logistics pages
 import CreateTripPage from "./pages/logistics/CreateTripPage";
@@ -68,6 +72,10 @@ const App = () => (
           {/* Guides */}
           <Route path="/guides" element={<GuidesPage />} />
           <Route path="/guides/:id" element={<GuideProfilePage />} />
+          {/* Admin Dashboards */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/moderator" element={<ModeratorDashboard />} />
+          <Route path="/reviewer" element={<ReviewerDashboard />} />
           {/* Search */}
           
           {/* Tourism */}
